@@ -77,18 +77,19 @@ classdef ImageMapping
             nChan = origImg.numImageChannels();
             
             tmpDoubles = zeros([sz nChan]);
-%             INTERP_METHOD = 'linear';
-            INTERP_METHOD = 'nearest';
+%             
+%             MAP_TYPE = 'linear';
+            MAP_TYPE = 'nearest';
             
             cls = class(origImg.img(1));
             if(~strcmp(cls,'double'))
                 tmpDoubles(:,:,1) = interp2(origImg.X,origImg.Y,double(origImg.img(:,:,1)),...
                     Xq,Yq,...
-                    INTERP_METHOD,obj.extrap_val);
+                    MAP_TYPE,obj.extrap_val);
             else
                 tmpDoubles(:,:,1) = interp2(origImg.X,origImg.Y,origImg.img(:,:,1),...
                     Xq,Yq,...
-                    INTERP_METHOD,obj.extrap_val);
+                    MAP_TYPE,obj.extrap_val);
             end
             for i=2:nChan
                 tmpDoubles(:,:,i) = tmpDoubles(:,:,1);

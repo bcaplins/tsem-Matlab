@@ -14,5 +14,9 @@
 *.pdf
 *.eps
 
-#
+# ignore thumbnails
 *.db
+
+# ignore matlab autosaves
+*.asv
+MyClasses/RemCon32Microscope.m
