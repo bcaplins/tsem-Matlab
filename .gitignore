@@ -1,7 +1,7 @@
 # image files
 *.jpg
 *.jpeg
-# *.bmp
+*.bmp
 *.gif
 *.img
 *.dat
