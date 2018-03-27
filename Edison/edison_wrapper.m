@@ -47,9 +47,19 @@ imsiz = size(rgbim);
 fim = single(rgbim)/255;
 fim = single(featurefun(fim));
 
+% figure(32131)
+% image(rgbim)
+% 
+% figure(32132)
+% image(fim)
+
 rgbim = permute(rgbim,[3 2 1]);
 fim = permute(fim, [3 2 1]);
 
+
+
+
+% return
 p = parse_inputs(varargin)
 
 labels = [];
