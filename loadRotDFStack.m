@@ -1,7 +1,10 @@
-function [se dfs] = loadRotDFStack(pre,N_dig,N_seg,roi_i,roi_j,df_scalefactor)
+function [se dfs] = loadRotDFStack(pre,N_dig,N_seg,roi_i,roi_j,df_scalefactor,offset)
+    if(nargin<7)
+        offset = 0;
+    end
 
     if nargin<6
-        df_scalefactor = 7;
+        df_scalefactor = 7; 
     end
 
     post = '.tif'
@@ -15,7 +18,7 @@ function [se dfs] = loadRotDFStack(pre,N_dig,N_seg,roi_i,roi_j,df_scalefactor)
 
 
     for i=1:N_seg
-        fn = [pre sprintf(format_str,i) post];
+        fn = [pre sprintf(format_str,i+offset) post];
         im = double(imread(fn))/255;
         dfs(roi_i,roi_j,i) = im(roi_i,roi_j)*df_scalefactor;
     end
