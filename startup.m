@@ -10,6 +10,7 @@ disp(' ')
 addpath NIST_dsc_data\
 addpath MyClasses\
 addpath MyFunctions\
+addpath .\
 
 set(0,'defaultlinelinewidth',2)
 set(0,'DefaultAxesFontSize', 10)

@@ -17,8 +17,8 @@ function err = imageError(A,B,shift)
       Bis = Ais-shift(1);
       Bjs = Ajs-shift(2);
       
-%       err = sum(sum((A(Ais,Ajs)-B(Bis,Bjs)).^2))./(length(Ais)*length(Ajs));
-      err = sum(sum((A(Ais,Ajs).*B(Bis,Bjs)).^2))./(length(Ais)*length(Ajs));
+      err = sum(sum((A(Ais,Ajs)-B(Bis,Bjs)).^2))./(length(Ais)*length(Ajs));
+%       err = sum(sum((A(Ais,Ajs).*B(Bis,Bjs)).^2))./(length(Ais)*length(Ajs));
       
       
       
