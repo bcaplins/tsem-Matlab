@@ -9,8 +9,19 @@ disp(' ')
 
 addpath NIST_dsc_data\
 addpath MyClasses\
+addpath MyApps\
 addpath MyFunctions\
 addpath .\
+
+addpath MyFunctions\Calibration\
+addpath MyFunctions\CasinoRelated\
+addpath MyFunctions\DataAnalysis\
+addpath MyFunctions\DiffPatManipulation\
+addpath MyFunctions\EM\
+addpath MyFunctions\ImageManipulation\
+addpath MyFunctions\Misc\
+
+
 
 set(0,'defaultlinelinewidth',2)
 set(0,'DefaultAxesFontSize', 10)
