@@ -199,11 +199,19 @@ classdef RemCon32Microscope < handle
             resp = obj.checkResponse(obj.readResponse());
         end
         
-       
+        function resp = cmdToggleBeamOnOff(obj,val)
+            if(val)
+                val = 1;
+            else
+                val = 2;
+            end
+            obj.writeCommand(sprintf('BMON %d',val));
+            resp = obj.checkResponse(obj.readResponse());
+        end
         
         function resp = cmdSetStagePositionSafeish(obj,xyz_mm,TR_deg)
             
-            
+%             
             xyz_ref = [58.75 8 0];
             TR_ref = [47.8 169];
             
@@ -271,8 +279,38 @@ classdef RemCon32Microscope < handle
             resp = str2num(resp);
         end
         
+        function resp = queryScanRotate(obj)
+            obj.writeCommand('SRO?');
+            resp = obj.checkResponse(obj.readResponse());
+            resp = str2num(resp);
+        end
+                
+        function resp = queryMagnification(obj)
+            obj.writeCommand('MAG?');
+            resp = obj.checkResponse(obj.readResponse());
+            resp = str2num(resp);
+        end
+        
+        function resp = queryEHT(obj)
+            obj.writeCommand('EHT?');
+            resp = obj.checkResponse(obj.readResponse());
+            resp = str2num(resp);
+        end
+        
+        function resp = queryScanRate(obj)
+            obj.writeCommand('RAT?');
+            resp = obj.checkResponse(obj.readResponse());
+            resp = str2num(resp);
+        end
+        
         function resp = queryWorkingDistance(obj)
             obj.writeCommand('FOC?');
+            resp = obj.checkResponse(obj.readResponse());
+            resp = str2num(resp);
+        end
+        
+        function resp = queryAperture(obj)
+            obj.writeCommand('APR?');
             resp = obj.checkResponse(obj.readResponse());
             resp = str2num(resp);
         end
@@ -284,7 +322,7 @@ classdef RemCon32Microscope < handle
         
         function resp = queryPhotoNumber(obj)
             obj.writeCommand('PHN?');
-            resp = obj.checkResponse(obj.readResponse())
+            resp = obj.checkResponse(obj.readResponse());
             resp = str2num(resp);
         end
         

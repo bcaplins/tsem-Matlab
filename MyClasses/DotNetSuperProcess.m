@@ -13,7 +13,7 @@ classdef DotNetSuperProcess < handle
     
     methods
         function obj = DotNetSuperProcess(path,args)
-            obj.exe_path = path
+            obj.exe_path = path;
             if (nargin>=2)
                 if(~isempty(args))
                     obj.args = args;

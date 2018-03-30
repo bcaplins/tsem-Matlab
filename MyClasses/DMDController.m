@@ -1,8 +1,8 @@
 classdef DMDController < handle & DotNetSuperProcess
     
     properties (Constant)
-        UP_MASK_PATH = 'C:\Users\1TEM\Documents\MATLAB\MASKS\UP.bmp';
-        DOWN_MASK_PATH = 'C:\Users\1TEM\Documents\MATLAB\MASKS\DOWN.bmp';
+        UP_MASK_PATH = 'C:\Users\1TEM\Documents\MATLAB\tsem-Matlab\MASKS\UP.bmp';
+        DOWN_MASK_PATH = 'C:\Users\1TEM\Documents\MATLAB\tsem-Matlab\MASKS\DOWN.bmp';
     end
     
     methods
@@ -17,7 +17,7 @@ classdef DMDController < handle & DotNetSuperProcess
             [status, result] = system('taskkill /F /IM tem_image_loader.exe /T');
             if(status==0)
                 disp('Killed old DMD process')
-                disp(result)
+                disp(result);
             end
             obj.startProcess();
             obj.writeUpMaskToDMD();
