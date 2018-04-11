@@ -3,6 +3,9 @@ function [N_events, bin_centers, bin_counts] = countPMTevents(dat,THRESH)
 % second column in volts
 
     
+
+
+    % Compute derivative of data
     dt = diff(dat(:,1));
     del_t = mean(dt);
     if(sum((abs((del_t-dt)/del_t))>1e-6))
@@ -19,8 +22,7 @@ function [N_events, bin_centers, bin_counts] = countPMTevents(dat,THRESH)
     
     t_prime = dat(1:end-1,1);
     v_prime = diff(dat(:,2))./diff(dat(:,1));
-    
-    
+
     v_prime_step = del_v/del_t;
     
     
@@ -33,20 +35,12 @@ function [N_events, bin_centers, bin_counts] = countPMTevents(dat,THRESH)
     lE = fliplr(-v_prime_step:-v_prime_step:min(v_prime));
     E = [lE rE]+v_prime_step/2;
 
-    TH = 1.234567799999992e+03;
-    idxs = find(v_prime>TH);
-    ts = diff(t_prime(idxs));
     
-%     figure
-%     histogram(ts,0:1e-6:1e-3)
-    
-    
+    % Compute histogram of derivative signal
     [bin_counts E] = histcounts(v_prime,E);
-    bin_centers =(E(2:end)+E(1:end-1))/2;
+    bin_centers =(E(2:end)+E(1:end-1))/2;    
     
-    
-    
-    
+    % If not specified then determine appropriate threshholding
     if(nargin<2)
         x = bin_centers(1:end-1);
         y = bin_counts(1:end-1)./bin_counts(2:end);
@@ -65,28 +59,37 @@ function [N_events, bin_centers, bin_counts] = countPMTevents(dat,THRESH)
 
         THRESH = mean(x(crossing_idx-1:crossing_idx));
     end
-    
-%     
-%     THRESH = v_prime_step*1.5
-    
+
+    bin_counts(bin_counts==0) = eps;
     
     
     figure(14135)
     clf
-%     plot(bin_centers,bin_counts)
-
     cm = lines;
-    bar(bin_centers,bin_counts,0.5,'FaceColor',cm(3,:),'EdgeColor',cm(3,:)/2,'LineWidth',1)
+    % plot the histogram
+    bar(bin_centers,bin_counts,0.5,'FaceColor',cm(3,:),'EdgeColor','none','LineWidth',1)
+%     stairs(E(1:end-1),bin_counts,'Color',cm(2,:),'LineWidth',2)
     ax = gca;
     ax.YScale = 'log';
     hold on
+    % plot the threshold
     plot(THRESH*[1 1],[min(bin_counts)+1 max(bin_counts)],'k--')
     xlim([min(bin_centers(bin_counts>0)) max(bin_centers(bin_counts>0))])
     
+    % plot the derivative of the histogram which is used for threshold
+    % selection
     plot(x,y)
     
+    xlabel('dV/dt')
+    ylabel('counts')
+    
+    
+    grid on
+    
+    % Count the events
     N_events = sum(bin_counts(bin_centers>THRESH))/dat(end,1);
 
+    ylim([0.1 inf])
     
 
 end

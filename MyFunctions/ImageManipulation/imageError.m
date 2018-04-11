@@ -2,9 +2,7 @@ function err = imageError(A,B,shift)
     
     l1 = [1 1];
     l2 = l1+shift;
-    r1 = size(A);
-    r2 = size(B)+shift;
-    
+
     leftX   = max( l1(1), l2(1) );
     rightX  = min( l1(1) + size(A,1), l2(1) + size(B,1) );
     topY    = max( l1(2), l2(2) );

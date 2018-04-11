@@ -4,6 +4,8 @@ function hsv_dat = convertHyperspectralImageToHSVimage(dat,doBaselineSubtraction
 
     cv = hsv(nd);
     
+%     cv = perceptColormap(nd);
+    
     hsv_dat = zeros([size(dat,1) size(dat,2) 3]);
     
     sumtot = 0;
@@ -13,6 +15,8 @@ function hsv_dat = convertHyperspectralImageToHSVimage(dat,doBaselineSubtraction
             tmp = sort(y);
             if(doBaselineSubtraction)
                 bl = mean(tmp(1:ceil(nd*.5)));
+            else 
+                bl = 0;
             end
 
             y = y(:)-bl;
