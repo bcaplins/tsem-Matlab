@@ -1,30 +1,28 @@
-function [est_mean, est_std] = estimateMeanAndStdFromPercentile(dat)
+function [est_mean, est_std] = estimateMeanAndStdFromWindow(N,Cs,lims)
 
-
-    [N E] = histcounts(dat(:),2^8);
-    Cs = (E(2:end)+E(1:end-1))/2;
+    idxs = find(Cs>=min(lims) & Cs<=max(lims));
     
     
     
-    [max_val max_idx] = max(N);
+    [max_val max_idx] = max(N(idxs));
     N = N/max_val;
     
+    real_max_idx = idxs(max_idx);
     
-    
-    est_mean = Cs(max_idx);
+    est_mean = Cs(real_max_idx);
     
     right_hm = nan;
-    for i=max_idx:length(Cs)
+    for i=real_max_idx:length(Cs)
         if(N(i)<0.5)
-            right_hm = interp1(N((i-1):i),Cs((i-1):i),0.5)
+            right_hm = interp1(N((i-1):i),Cs((i-1):i),0.5);
             break;
         end
     end
 
     left_hm = nan;
-    for i=max_idx:-1:1
+    for i=real_max_idx:-1:1
         if(N(i)<0.5)
-            left_hm = interp1(N(i:(i+1)),Cs(i:(i+1)),0.5)
+            left_hm = interp1(N(i:(i+1)),Cs(i:(i+1)),0.5);
             break;
         end
     end

@@ -1,17 +1,12 @@
 
 beam_volt = 30000; % eV
-lattice_constant = 1.4; % nm
-semi_angle  = 1.5e-3;%(1/2)*(1/3)*5.8e-3; % radians
+lattice_constant = 0.246; % nm
+semi_angle  = 2e-3;%(1/2)*(1/3)*5.8e-3; % radians
 
 
 
-% lam = 1242/beam_energy; % nm
 
-
-lam = @(beam_volt) 1.226./sqrt(beam_volt.*(1+beam_volt*0.9788e-6))
-
-
-bragg_angle = @(beam_volt,lattice_constant) asin(lam(beam_volt)./(2*lattice_constant)) % radians
+bragg_angle = @(beam_volt,lattice_constant) asin(1e9*getElectronWavelength(beam_volt)./(2*lattice_constant)) % radians
 
 
 

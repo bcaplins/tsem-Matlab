@@ -10,7 +10,7 @@ function hsv_dat = convertAngleDataToHSVimage(angs,amps,max_ang)
 %     angs(angs==0) = max_ang;
     for i=1:size(angs,1)
         for j=1:size(angs,2)
-            hsv_dat(i,j,:) = amps(i,j)*cv(angs(i,j),:);
+            hsv_dat(i,j,:) = amps(i,j)*cv(floor(angs(i,j)),:);
         end
     end
 %     hsv_dat = hsv_dat./mean(amps(:))/2;

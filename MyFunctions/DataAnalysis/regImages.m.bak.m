@@ -22,13 +22,11 @@ N_seg = length(ex.mask_filenames);
 idxs = idxs(2:end)-1;
 refidxs = refidxs(2:end)-1;
 
-dats = cell(size(X,1),1);
-N_IMGS_PER_STACK = N_seg+ex.collect_se2;
-parfor i=1:size(X,1)
-    tmp = loadImageStack(ex.filename_prefix,ex.N_digits,N_IMGS_PER_STACK,(i-1)*N_IMGS_PER_STACK);
-    dats{i} = registerImageStack(tmp);
-end
-    
+
+% 
+% idxs = [2 1 3]
+% refidxs = [0 0 1]
+
 tforms = cell(length(idxs)+1,1);
 for i=1:length(idxs)+1
 	tforms{i} = affine2d;
@@ -39,8 +37,11 @@ imageSize = [768 1024];
 fnamepre = ex.filename_prefix;
 
 
+idx_offset = ex.collect_se2;
 
 for i=1:length(idxs)
+
+    
     
     idx = idxs(i);
     refidx = refidxs(i);
@@ -53,48 +54,41 @@ for i=1:length(idxs)
 
     dX = round(1024*(dX2-dX1));
     dY = round(768*(dY2-dY1));
+
+    formatStr = ['%0.' num2str(ex.N_digits) 'd'];
     
-    refIm = dats{refidx+1}(:,:,1);
-    im = dats{idx+1}(:,:,1);
+    refIm = double(imread([fnamepre sprintf(formatStr ,refidx*(N_seg+idx_offset)) '.tif']))/255;
+    im = double(imread([fnamepre sprintf(formatStr ,idx*(N_seg+idx_offset)) '.tif']))/255;
     
-    refIm(~isfinite(refIm)) = 0;
-    im(~isfinite(im)) = 0;
+    DEL = 150;
     
-    tform = largeshift_dftregistration(refIm,im);
+%     dX = -665;
+%     dY = -5;
     
+    qs = (dX-DEL):10:(dX+DEL);
+    rs = (dY-DEL):10:(dY+DEL);
+    [Qs Rs] = meshgrid(qs, rs);
+    
+    errs = zeros(size(Qs));
+    
+    for k =1:numel(Qs)
+        errs(k) = imageError(refIm,im,[-Rs(k) Qs(k)]);
+    end
+    
+    figure(123124)
+    clf
+    contourf(Qs,-Rs,errs)
+    
+    [dum midx] = min(errs(:));
+    dX = Qs(midx)
+    dY = Rs(midx)
 %     
-% %     refIm = double(imread([fnamepre sprintf(formatStr ,refidx*(N_seg+idx_offset)) '.tif']))/255;
-% %     im = double(imread([fnamepre sprintf(formatStr ,idx*(N_seg+idx_offset)) '.tif']))/255;
-% %     
-%     DEL = 150;
-%     
-% %     dX = -665;
-% %     dY = -5;
-%     
-%     qs = (dX-DEL):10:(dX+DEL);
-%     rs = (dY-DEL):10:(dY+DEL);
-%     [Qs Rs] = meshgrid(qs, rs);
-%     
-%     errs = zeros(size(Qs));
-%     
-%     for k =1:numel(Qs)
-%         errs(k) = imageError(refIm,im,[-Rs(k) Qs(k)]);
-%     end
-%     
-%     figure(123124)
-%     clf
-%     contourf(Qs,-Rs,errs)
-%     
-%     [dum midx] = min(errs(:));
-%     dX = Qs(midx)
-%     dY = Rs(midx)
-% %     
-%     [optimizer, metric] = imregconfig('monomodal');
-% 
-% 
-%     tform0 = affine2d([1 0 0; 0 1 0; dX -dY 1]);
-% 
-%     tform = imregtform(im, refIm, 'translation', optimizer, metric,'InitialTransformation',tform0);
+    [optimizer, metric] = imregconfig('monomodal');
+
+
+    tform0 = affine2d([1 0 0; 0 1 0; dX -dY 1]);
+
+    tform = imregtform(im, refIm, 'translation', optimizer, metric,'InitialTransformation',tform0);
     
 %     tform = tform0;
     
@@ -178,26 +172,23 @@ for seg = 0:N_seg
     firstLoop = 1;
     for i = 1:length(tforms)%([4 3 1 5 7 0 2 6 8]+1)%1:length(tforms)%
 
+        formatStr = ['%0.' num2str(ex.N_digits) 'd'];
 
-%         I = double(imread([fnamepre sprintf(formatStr,(i-1)*(N_seg+idx_offset)+seg) '.tif']))/255;
-        I = dats{i}(:,:,seg+1);
-        I(~isfinite(I)) = 0;
-        
+        I = double(imread([fnamepre sprintf(formatStr,(i-1)*(N_seg+idx_offset)+seg) '.tif']))/255;
+
         % Transform I into the panorama.
-        warpedImage = imwarp(I, tforms{i},'nearest', 'OutputView', panoramaView,'FillValues',NaN);
+        warpedImage = imwarp(I, tforms{i}, 'OutputView', panoramaView,'FillValues',NaN);
 %         panorama = panorama+warpedImage;
-        
+
         % Generate a binary mask.
-        mask = imwarp(~isfinite(dats{i}(:,:,seg+1)), tforms{i},'nearest', 'OutputView', panoramaView);
+        mask = imwarp(ones(size(I,1),size(I,2)), tforms{i}, 'OutputView', panoramaView);
 %         panorama_ct = panorama_ct+mask;
 
         if(firstLoop)
             panorama = warpedImage;
-            panorama(mask>0) = NaN;
             firstLoop = 0;
         else
-%             unique_idxs = find(isnan(panorama) & (mask~=1));
-            unique_idxs = find(isnan(panorama) & (mask==0));
+            unique_idxs = find(isnan(panorama));
 %             overlapped_idxs = find(~isnan(panorama) & ~isnan(warpedImage));
             panorama(unique_idxs) = warpedImage(unique_idxs);
 %             panorama(overlapped_idxs) = (warpedImage(overlapped_idxs)+panorama(overlapped_idxs))/2; 

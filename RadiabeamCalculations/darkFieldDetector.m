@@ -14,13 +14,13 @@ FUDGEY_LOSS = 1;
 FUDGEY_GAIN = 1.65;
 
 
-lambda = 400;%550; % nm
+lambda = 550; % nm
 top_reflective_coating = 1.9*1.0;
-first_mirror_ref = 0.85*1.; % 0.85 for UV
+first_mirror_ref = 1.; % 0.85 for UV
 aper = 0.9*25.4;%0.9*25.4; % 7.5 mm for aperture,  0.9*25.4 mm for no aperture 
-Resp = .13;0.043; % 0.043 for 550 nm -01, 0.13 for 400 nm -210 % assum
-n_yag = 1.79;1.83;
-fracOfSignalCollected = 0.00063; % basically 1.0 for brightfield
+Resp = .16;0.043; % 0.043 for 550 nm -01, 0.13 for 400 nm -210 % assum
+n_yag = 1.83;
+fracOfSignalCollected = 0.004; % basically 1.0 for brightfield
 
 
 joulePerPhoton = (1240/lambda)*1.6e-19
